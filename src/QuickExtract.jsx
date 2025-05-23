@@ -1,7 +1,5 @@
-
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import { Card, CardContent } from "../components/ui/card";
 
 export default function QuickExtract() {
   const [data, setData] = useState([]);
@@ -70,66 +68,91 @@ export default function QuickExtract() {
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">QuickExtract: Spreadsheet Filter Tool</h1>
-      <Input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} />
+      <input
+        type="file"
+        accept=".xlsx, .xls, .csv"
+        onChange={handleFileUpload}
+        className="border px-2 py-1 rounded"
+      />
 
       {columns.length > 0 && (
-        <Card>
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold">Filters</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {columns.map((col) => (
-                <Input key={col} placeholder={`Filter by ${col}`} onChange={(e) => handleFilterChange(col, e.target.value)} />
-              ))}
-            </div>
+        <div className="border rounded p-4 space-y-4">
+          <h2 className="text-xl font-semibold">Filters</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {columns.map((col) => (
+              <input
+                key={col}
+                type="text"
+                placeholder={`Filter by ${col}`}
+                onChange={(e) => handleFilterChange(col, e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            ))}
+          </div>
 
-            <h2 className="text-xl font-semibold mt-4">Select Columns to Display</h2>
-            <div className="grid grid-cols-3 gap-2">
-              {columns.map((col) => (
-                <label key={col} className="flex items-center space-x-2">
-                  <input type="checkbox" checked={displayCols.includes(col)} onChange={(e) => {
-                    const newCols = e.target.checked ? [...displayCols, col] : displayCols.filter((c) => c !== col);
+          <h2 className="text-xl font-semibold mt-4">Select Columns to Display</h2>
+          <div className="grid grid-cols-3 gap-2">
+            {columns.map((col) => (
+              <label key={col} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={displayCols.includes(col)}
+                  onChange={(e) => {
+                    const newCols = e.target.checked
+                      ? [...displayCols, col]
+                      : displayCols.filter((c) => c !== col);
                     setDisplayCols(newCols);
-                  }} />
-                  <span>{col}</span>
-                </label>
-              ))}
-            </div>
+                  }}
+                />
+                <span>{col}</span>
+              </label>
+            ))}
+          </div>
 
-            <div className="flex gap-4 mt-4">
-              <Button onClick={exportToCSV}>Export to CSV</Button>
-              <Button onClick={exportToXLSX}>Export to Excel</Button>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={exportToCSV}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Export to CSV
+            </button>
+            <button
+              onClick={exportToXLSX}
+              className="bg-green-500 text-white px-4 py-2 rounded"
+            >
+              Export to Excel
+            </button>
+          </div>
+        </div>
       )}
 
       {filteredData.length > 0 && (
-        <Card>
-          <CardContent>
-            <h2 className="text-xl font-semibold mb-2">Filtered Data</h2>
-            <div className="overflow-auto">
-              <table className="min-w-full text-sm border">
-                <thead>
-                  <tr>
+        <div className="border rounded p-4">
+          <h2 className="text-xl font-semibold mb-2">Filtered Data</h2>
+          <div className="overflow-auto">
+            <table className="min-w-full text-sm border">
+              <thead>
+                <tr>
+                  {displayCols.map((col) => (
+                    <th key={col} className="border p-2 text-left font-bold">{col}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData.map((row, idx) => (
+                  <tr key={idx}>
                     {displayCols.map((col) => (
-                      <th key={col} className="border p-2 text-left font-bold">{col}</th>
+                      <td key={col} className="border p-2">{row[col]}</td>
                     ))}
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredData.map((row, idx) => (
-                    <tr key={idx}>
-                      {displayCols.map((col) => (
-                        <td key={col} className="border p-2">{row[col]}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );
 }
+
+
